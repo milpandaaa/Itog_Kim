@@ -1,0 +1,30 @@
+{% extends 'menu.html' %}
+{% block body %}
+ {% csrf_token %}
+     <div style="margin-left: 10%; margin-top: 10%">
+     <table class="table_col" id="info-table">
+    <thead>
+    <tr><th>{{ data_r.name }}</th><th>{{ data_r.phone_number }}</th><th>{{ data_r.address }}</th>
+    </tr>
+</thead>
+     </table>
+
+<table class="table_col" id="info-table">
+    <thead>
+    <tr><th>Информация о взятых книгах</th>
+    </tr>
+
+</thead>
+    <tbody>
+    {% for card in data_c %}
+        {% for book in data_b %}
+        {% if card.reader == data_r.id and card.book == book.id %}
+            <tr><th>{{ book.name }}</th><th>{{ card.date }}</th></tr><br>
+        {% endif %}
+        {% endfor %} {% endfor %}
+    </tbody>
+</table>
+     <br>
+<a href="{% url 'card' data_r.id %}" class="button-1">Добавить книгу</a>
+    </div>
+{% endblock %}

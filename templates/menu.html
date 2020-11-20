@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <style>
+        @import url('https://fonts.googleapis.com/css?family=PT+Sans');
+.top-menu {
+  position: relative;
+  background: #fff;
+  box-shadow: inset 0 0 10px #ccc;
+}
+.top-menu:before,
+.top-menu:after {
+  content: "";
+  display: block;
+  height: 1px;
+  border-top: 3px solid #575350;
+  border-bottom: 1px solid #575350;
+  margin-bottom: 2px;
+}
+.top-menu:after {
+  border-bottom: 3px solid #575350;
+  border-top: 1px solid #575350;
+  box-shadow: 0 2px 7px #ccc;
+  margin-top: 2px;
+}
+.menu-main {
+  list-style: none;
+  padding: 0 30px;
+  margin: 0;
+  font-size: 18px;
+  text-align: center;
+  position: relative;
+}
+.menu-main:before,
+.menu-main:after {
+  content: "\25C8";
+  line-height: 1;
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+}
+.menu-main:before {left: 15px;}
+.menu-main:after {right: 15px;}
+.menu-main li {
+  display: inline-block;
+  padding: 5px 0;
+}
+.menu-main a {
+  text-decoration: none;
+  display: inline-block;
+  margin: 2px 5px;
+  padding: 6px 15px;
+  font-family: 'PT Sans', sans-serif;
+  font-size: 16px;
+  color: #777777;
+  border-bottom: 1px solid transparent;
+  transition: .3s linear;
+}
+.menu-main .current, .menu-main a:hover {
+  border-radius: 3px;
+  background: #f3ece1;
+  color: #313131;
+  text-shadow: 0 1px 0 #fff;
+  border-color: #c6c6c6;
+}
+@media (max-width: 500px) {
+  .menu-main li {display: block;}
+}
+            .button-1 {
+    color: #232323;
+    background: transparent;
+    border: 1px solid #232323;
+    position: relative;
+    font-size: 14px;
+    letter-spacing: .3em;
+    font-family: 'Montserrat', sans-serif;
+    padding: 17px 34px 17px 39px;
+    transition: .2s ease-in-out;
+    cursor: pointer;
+}
+
+.button-1:before {
+    content: "";
+    position: absolute;
+    top: 5px;
+    left: 5px;
+    width: 100%;
+    height: 100%;
+    background: #777777;
+    z-index: -1;
+    transition: .25s ease;
+    transform: translate(0, 0);
+}
+
+.button-1:hover:before {
+    transform: translate(4px, 4px);
+}
+
+.table_col {
+  font-family: "Lucida Sans Unicode", "Lucida Grande", Sans-Serif;
+  font-size: 14px;
+  width: 660px;
+  background: white;
+  text-align: left;
+  border-collapse: collapse;
+  color: #3E4347;
+}
+.table_col th {
+font-weight: normal;
+border-bottom: 2px solid #F5E1A6;
+border-right: 20px solid white;
+border-left: 20px solid white;
+padding: 8px 10px;
+}
+.table_col td {
+border-right: 20px solid white;
+border-left: 20px solid white;
+padding: 12px 10px;
+color: #8b8e91;
+}
+
+.text,
+.textarea {
+    padding:5px 10px;
+    height:27px;
+    border:1px solid #ddd;
+    color:#333;
+    background:url(../gfx/bginput.jpg) repeat-x bottom #fff;
+    position:relative;
+    z-index:2;
+}
+
+.text {
+    width:220px;
+}
+{% block style %}
+{% endblock %}
+    </style>
+</head>
+<body>
+<nav class="top-menu">
+  <ul class="menu-main">
+      {% if user.is_authenticated %}
+            <li><a class="current" href="{% url 'newReader' %}" >Записать нового читателя</a></li>
+            <li><a href="{% url 'books' %}" >Показать все книги</a></li>
+           <li><a href="{% url 'menu' %}" >Показать всех читателей</a></li>
+            <li><a href="{% url 'logout' %}" >Выйти</a></li>
+            {% else %}
+            <li><a href="/accounts/login/" >Войти</a></li>
+            {% endif %}
+  </ul>
+</nav>
+{% block body %}
+    <div style="margin-left: 10%; margin-top: 10%">
+    <input class="text" type="text" placeholder="Фамилия или телефон" id="search-text" onkeyup="tableSearch()">
+<table class="table_col" id="info-table">
+    <thead>
+        <tr>
+            <th>Фамилия</th>
+            <th>Телефон</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+    {% for reader in data %}
+    <tr>
+        <th>{{ reader.name }}</th>
+        <th>{{ reader.phone_number }}</th>
+    <th><a href="{% url 'reader' reader.id %}" style="border-radius: 3px;
+  background: #f3ece1;
+  color: #313131;
+  text-shadow: 0 1px 0 #fff;
+  border-color: #c6c6c6;">Подробнее</a></th>
+    </tr>
+    {% endfor %}
+    </tbody>
+</table>
+    </div>
+
+    <script>
+    function tableSearch() {
+    var phrase = document.getElementById('search-text');
+    var table = document.getElementById('info-table');
+    var regPhrase = new RegExp(phrase.value, 'i');
+    var flag = false;
+    for (var i = 1; i < table.rows.length; i++) {
+        flag = false;
+        for (var j = table.rows[i].cells.length - 1; j >= 0; j--) {
+            flag = regPhrase.test(table.rows[i].cells[j].innerHTML);
+            if (flag) break;
+        }
+        if (flag) {
+            table.rows[i].style.display = "";
+        } else {
+            table.rows[i].style.display = "none";
+        }
+
+    }
+}
+    </script>
+{% endblock %}
+
+</body>
+</html>

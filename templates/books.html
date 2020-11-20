@@ -1,0 +1,56 @@
+{% extends 'menu.html' %}
+{% block style %}
+{% endblock %}
+{% block body %}
+    <div style="margin-left: 10%; margin-top: 10%">
+    <input class="text" type="text" placeholder="Название или автор" id="search-text" onkeyup="tableSearch()">
+<table class="table_col" id="info-table">
+    <thead>
+        <tr>
+            <th>Название книги</th>
+            <th>Автор</th>
+            <th>Дополнительная информация</th>
+        </tr>
+    </thead>
+    <tbody>
+    {% for book in data %}
+    <tr>
+        <th>{{ book.name }}</th>
+        <th>{{ book.author }}</th>
+
+    <th>{{ book.publisher }} {{ book.year }}, {{ book.city }}<br> {{ book.language }},{{ book.theme }}</th>
+    <th><a href="{% url 'delete' book.id %}" style="border-radius: 3px;
+  background: #f3ece1;
+  color: #313131;
+  text-shadow: 0 1px 0 #fff;
+  border-color: #c6c6c6;">Удалить</th>
+    </tr>
+    {% endfor %}
+    </tbody>
+</table>
+    <br>
+<a href="{% url 'newBook'  %}" class="button-1">Добавить книгу</a>
+    </div>
+
+    <script>
+    function tableSearch() {
+    var phrase = document.getElementById('search-text');
+    var table = document.getElementById('info-table');
+    var regPhrase = new RegExp(phrase.value, 'i');
+    var flag = false;
+    for (var i = 1; i < table.rows.length; i++) {
+        flag = false;
+        for (var j = table.rows[i].cells.length - 1; j >= 0; j--) {
+            flag = regPhrase.test(table.rows[i].cells[j].innerHTML);
+            if (flag) break;
+        }
+        if (flag) {
+            table.rows[i].style.display = "";
+        } else {
+            table.rows[i].style.display = "none";
+        }
+
+    }
+}
+    </script>
+{% endblock %}
